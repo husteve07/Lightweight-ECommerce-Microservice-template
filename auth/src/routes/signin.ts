@@ -1,10 +1,9 @@
 import express, {Request, Response} from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
+import { validateRequest, BadRequestError } from '@michaelservingticket/common';
 
-import { validateRequest } from '../middlewares/validate-request';
 import { User } from '../models/user';
-import { BadRequestError } from '../errors/bad-request-error';
 import { Password } from '../services/password';
 
 const router = express.Router();
@@ -18,6 +17,7 @@ router.post('/api/users/signin',[
         .notEmpty()
         .withMessage("You must supply a password")
 ],
+//@ts-ignore
 validateRequest,
 async (req: Request, res: Response) => {
 
@@ -42,6 +42,7 @@ async (req: Request, res: Response) => {
     process.env.JWT_KEY!
     );
     req.session = {
+        //@ts-ignore
         jwt: userJWT
     };
 

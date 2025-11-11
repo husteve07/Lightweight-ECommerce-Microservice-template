@@ -26,7 +26,7 @@ it('returns a 400 with an invalid password', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            password: 'p' // too short
+            password: 'p' 
         })
         .expect(400);
 });

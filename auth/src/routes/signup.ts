@@ -3,10 +3,10 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
-import { validateRequest } from '../middlewares/validate-request';
+import { validateRequest, BadRequestError } from '@michaelservingticket/common';
 
 import { User } from '../models/user';
-import { BadRequestError } from '../errors/bad-request-error';
+import ts from 'typescript';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.post('/api/users/signup', [
         .isLength({ min: 4, max: 20})
         .withMessage('pwd must be between 4 to 20 characters')
 ],
+//@ts-ignore
  validateRequest,
  async (req : Request, res: Response) => {
 
@@ -41,6 +42,7 @@ router.post('/api/users/signup', [
     process.env.JWT_KEY!
     );
     req.session = {
+        //@ts-ignore
         jwt: userJWT
     };
     res.status(201).send(user);

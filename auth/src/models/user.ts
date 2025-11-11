@@ -6,14 +6,19 @@ interface UserAttrs {
     password: string;
 }
 
-interface UserModel extends mongoose.Model<UserDocument> {
-    build(attrs: UserAttrs): UserDocument;
-}
 
+//declare document structue
 interface UserDocument extends mongoose.Document{
     email: string;
     password: string;
 }
+
+//instantiate Model using the user document template
+//making a build function to 
+interface UserModel extends mongoose.Model<UserDocument> {
+    build(attrs: UserAttrs): UserDocument;
+}
+
 
 const userSchema = new mongoose.Schema({
     email: {
