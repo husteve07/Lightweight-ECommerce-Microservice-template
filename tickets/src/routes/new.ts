@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { requireAuth, validateRequest} from '@michaelservingticket/common';
 import { body } from 'express-validator'; 
 import { Ticket } from '../models/ticket';
+import { TicketCreatedEventPublisher } from '../events/publishers/ticket-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 //@ts-ignore
@@ -27,6 +29,12 @@ async (req: Request, res: Response) => {
         userId: req.currentUser!.id
     });
     await ticket.save();
+    new TicketCreatedEventPublisher(natsWrapper.client).publish({
+        id: ticket.id,
+        title: ticket.title,
+        price: ticket.price,
+        userId: ticket.userId
+    });
 
     res.status(201).send(ticket);
 });
