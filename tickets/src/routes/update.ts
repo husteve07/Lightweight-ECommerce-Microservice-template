@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { Ticket } from "../models/ticket";
 import { body } from "express-validator";
-import { validateRequest, requireAuth, NotAuthorizedError } from "@michaelservingticket/common";
+import { validateRequest, requireAuth, NotAuthorizedError, BadRequestError } from "@michaelservingticket/common";
 import { TicketUpdatedEventPublisher } from "../events/publishers/ticket-updated-publisher";
 import { natsWrapper } from "../nats-wrapper";
 
@@ -16,6 +16,10 @@ router.put('/api/tickets/:id', requireAuth, [
     const ticket = await Ticket.findById(req.params.id);
     if (!ticket) {
         return res.status(404).send();
+    }
+
+    if (ticket.orderId) {
+        throw new BadRequestError('Cannot edit a reserved ticket');
     }
 
     if (ticket.userId !== req.currentUser!.id) {
@@ -33,6 +37,7 @@ router.put('/api/tickets/:id', requireAuth, [
         title: ticket.title,
         price: ticket.price,
         userId: ticket.userId,
+        version: ticket.version
     });
 
     res.send(ticket);
